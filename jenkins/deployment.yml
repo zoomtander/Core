@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+spec:
+  selector:
+    matchLabels:
+      app: jenkins
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+        - name: jenkins
+          image: gcr.io/potent-howl-286200/jenkins
+          volumeMounts:
+            - mountPath: /var/jenkins_home
+              name: jenkins-volume
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 50000
+              protocol: TCP
+      volumes:
+        - name: jenkins-volume
+          hostPath:
+            path: /jenkins
+
+
+---
+
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: jenkins
+  spec:
+    selector:
+      app: jenkins
+    ports:
+    - name: jenkins1
+      protocol: "TCP"
+      port: 8080
+      targetPort: 8080
+    - name: jenkins2
+      protocol: "TCP"
+      port: 50000
+      targetPort: 50000
+    type: LoadBalancer
+  status:
+      loadBalancer:
+        ingress:
+        - ip: 35.193.39.194

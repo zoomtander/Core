@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artifactory
+spec:
+  selector:
+    matchLabels:
+      app: artifactory
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: artifactory
+    spec:
+      containers:
+        - name: artifactory
+          image: gcr.io/potent-howl-286200/artifactory
+          volumeMounts:
+            - mountPath: /var/opt/jfrog/artifactory/
+              name: artifactory-volume
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+            - containerPort: 8082
+              protocol: TCP
+      volumes:
+        - name: artifactory-volume
+          hostPath:
+            path: /artifactory
+
+
+---
+
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: artifactory
+  spec:
+    selector:
+      app: artifactory
+    ports:
+    - name: artifactory1
+      protocol: "TCP"
+      port: 8082
+      targetPort: 8082
+    - name: artifactory2
+      protocol: "TCP"
+      port: 8081
+      targetPort: 8081
+    type: LoadBalancer
+  status:
+      loadBalancer:
+        ingress:
+        - ip: 35.193.39.194
