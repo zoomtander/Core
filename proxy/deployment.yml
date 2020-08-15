@@ -1,19 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web
+  name: proxy
+  namespace: produccion-publico
 spec:
   selector:
     matchLabels:
-      app: web
+      app: proxy
   replicas: 1
   template:
     metadata:
       labels:
-        app: web
+        app: proxy
     spec:
       containers:
-        - name: web
+        - name: proxy
           image: gcr.io/potent-howl-286200/web
           ports:
             - containerPort: 80
@@ -23,10 +24,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: web
+  name: proxy
+  namespace: produccion-publico
 spec:
   selector:
-    app: web
+    app: proxy
   ports:
   - protocol: "TCP"
     port: 80
@@ -35,4 +37,4 @@ spec:
 status:
     loadBalancer:
       ingress:
-      - ip: 35.193.39.194
+      - ip: 34.120.152.193
