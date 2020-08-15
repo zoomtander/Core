@@ -34,8 +34,8 @@ spec:
     port: 80
     targetPort: 80
   type: LoadBalancer
-  loadBalancerIP: 34.107.198.246
+  loadBalancerIP: 34.71.224.1
 status:
     loadBalancer:
       ingress:
-      - ip: 34.107.198.246
+        - ip: 34.71.224.1
