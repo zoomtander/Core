@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-root-client
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: nfs-server.storage-nfs.svc.cluster.local
+    path: "/"
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-jenkins-client
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: nfs-server.storage-nfs.svc.cluster.local
+    path: "/jenkins/"
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-artifactory-client
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: nfs-server.storage-nfs.svc.cluster.local
+    path: "/artifactory/"
+
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: vclm-root
+spec:
+  volumeName: pv-root-client
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Gi
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: vclm-jenkins
+spec:
+  volumeName: pv-jenkins-client
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Gi
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: vclm-artifactory
+spec:
+  volumeName: pv-artifactory-client
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ds-ejemplo
+spec:
+  selector:
+    matchLabels:
+      name: pod-ejemplo
+  template:
+    metadata:
+      labels:
+        name: pod-ejemplo
+    spec:
+      containers:
+      - name: "contenedor1"
+        image: "nginx"
+        volumeMounts:
+          - mountPath: /nfs/
+            name: vol-root
+          - mountPath: /jenkins/
+            name: vol-jenkins
+          - mountPath: /artifactory/
+            name: vol-artifactory
+      volumes:
+        - name: vol-root
+          persistentVolumeClaim:
+            claimName: vclm-root
+        - name: vol-jenkins
+          persistentVolumeClaim:
+            claimName: vclm-jenkins
+        - name: vol-artifactory
+          persistentVolumeClaim:
+            claimName: vclm-artifactory

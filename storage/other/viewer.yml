@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-viewer-jenkins
+  namespace: viewer
+  labels:
+    type: nfs
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  gcePersistentDisk:
+    pdName: dsk-jenkins
+    fsType: ext4
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-viewer-artifactory
+  namespace: viewer
+  labels:
+    type: nfs
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  gcePersistentDisk:
+    pdName: dsk-artifactory
+    fsType: ext4
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vclm-viewer-jenkins
+  namespace: viewer
+spec:
+  volumeName: pv-viewer-jenkins
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vclm-viewer-artifactory
+  namespace: viewer
+spec:
+  volumeName: pv-viewer-artifactory
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ds-viewer
+  namespace: viewer
+spec:
+  selector:
+    matchLabels:
+      name: pod-viewer
+  template:
+    metadata:
+      labels:
+        name: pod-viewer
+    spec:
+      containers:
+      - name: "viewer-jenkins"
+        image: "nginx"
+        volumeMounts:
+          - mountPath: /jenkins/
+            name: vol-jenkins
+          - mountPath: /artifactory/
+            name: vol-artifactory
+      volumes:
+        - name: vol-jenkins
+          persistentVolumeClaim:
+            claimName: vclm-viewer-jenkins
+        - name: vol-artifactory
+          persistentVolumeClaim:
+            claimName: vclm-viewer-artifactory
